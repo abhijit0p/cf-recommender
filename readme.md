@@ -1,34 +1,200 @@
 # Production-Grade Hybrid Collaborative Filtering Recommender
 
-A modular, high-threshold recommendation engine that combines **Behavioral Collaborative Filtering (CF)** with **Semantic Content Relevance**, stabilized by a machine learning-based veto ranker to filter out real-world data noise and "chaos" interactions.
+A modular recommendation engine combining:
 
-## 🚀 Overview
+- Behavioral Collaborative Filtering (CF)
+- Semantic Content Similarity
+- ML-based ranking filters
 
-Real-world interaction logs are messy. This engine is built to handle highly noisy datasets by implementing a multi-stage recommendation pipeline:
-1. **Behavioral Discovery:** Computes Item-Item Cosine Similarity profiles based on user interaction matrices.
-2. **Veto Layers:** Applies strict **Similarity Floor** and **Support Count** filters to eliminate spurious or accidental co-occurrences.
-3. **ML Re-Ranking:** Evaluates remaining candidates through a trained Logistic Regression ranker (`cf_ranker.pkl`) assessing similarity, global item popularity, and co-purchase support.
-4. **Hybrid Blending:** Blends the behavioral confidence scores (70% weight) with semantic/content alignment vectors (30% weight) to produce structurally sound, context-aware recommendations.
+The system is designed to handle noisy real-world interaction data by filtering accidental co-occurrences and blending behavioral confidence with semantic relevance.
 
 ---
 
-## 📂 Project Structure
+# ✨ Features
+
+- Item-Item Collaborative Filtering using cosine similarity
+- Noise suppression using similarity thresholds and support counts
+- Logistic Regression-based veto/ranking model
+- Hybrid recommendation blending:
+  
+```text
+Final Score =
+    (CF Score × 0.7)
+  + (Semantic Score × 0.3)
+```
+
+- Modular architecture for experimentation and scaling
+
+---
+
+# 📂 Project Structure
 
 ```text
 cf-recommender/
 │
 ├── data/
-│   └── interactions.json       # Generated synthetic messy interaction logs
+│   └── interactions.json
 │
 ├── models/
-│   └── cf_ranker.pkl           # Trained Logistic Regression vetting model
+│   └── cf_ranker.pkl
 │
 ├── src/
-│   ├── generate_data.py        # Scaled data generator (5k+ clustered/chaos rows)
-│   ├── train_ranker.py         # Sci-Kit Learn training script for the veto ranker
-│   ├── cf_engine.py            # Baseline User/Item-based CF reference
-│   ├── cf_recommender.py       # Production-grade Ranked Collaborative Filtering
-│   └── hybrid_engine.py        # Main engine blending behavioral & semantic scores
+│   ├── generate_data.py
+│   ├── train_ranker.py
+│   ├── cf_engine.py
+│   ├── cf_recommender.py
+│   └── hybrid_engine.py
 │
-├── .gitignore                  # Prevents environment and temporary file leaks
-└── README.md                   # System documentation
+├── .gitignore
+└── README.md
+```
+
+---
+
+# ⚙️ Setup
+
+## Create Virtual Environment
+
+### Windows
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\activate
+```
+
+### Linux / macOS
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+---
+
+## Install Dependencies
+
+```bash
+pip install numpy pandas scikit-learn joblib
+```
+
+---
+
+# 🚀 Execution Flow
+
+## Step 1 — Generate Mock Interaction Data
+
+Creates clustered and noisy interaction logs.
+
+```bash
+python src/generate_data.py
+```
+
+---
+
+## Step 2 — Train the Ranker
+
+Trains the Logistic Regression veto model.
+
+```bash
+python src/train_ranker.py
+```
+
+---
+
+## Step 3 — Run Collaborative Filtering Engine
+
+```bash
+python src/cf_recommender.py
+```
+
+Example output:
+
+```text
+Target: [iPhone 17]
+  -> AirPods
+  -> Apple Pencil
+  -> Magsafe Charger
+```
+
+---
+
+## Step 4 — Run Hybrid Recommendation Engine
+
+```bash
+python src/hybrid_engine.py
+```
+
+Example output:
+
+```text
+Hybrid Results for [iPhone 17]:
+
+  -> Magsafe Charger
+     Hybrid: 0.9850
+
+  -> AirPods
+     Hybrid: 0.8500
+```
+
+---
+
+# 🧠 Recommendation Pipeline
+
+## 1. Behavioral Candidate Discovery
+
+Builds Item-Item similarity using cosine similarity over interaction matrices.
+
+---
+
+## 2. Noise Filtering
+
+Recommendations are filtered using:
+- Similarity thresholds
+- Minimum support counts
+
+This removes weak or accidental correlations.
+
+---
+
+## 3. ML Re-Ranking
+
+A Logistic Regression model evaluates:
+- Similarity strength
+- Shared interaction support
+- Item popularity
+
+---
+
+## 4. Hybrid Blending
+
+Final recommendations combine:
+- Behavioral relevance
+- Semantic similarity
+
+This improves contextual recommendation quality.
+
+---
+
+# 🛠️ Tech Stack
+
+- Python
+- NumPy
+- Pandas
+- Scikit-Learn
+- Joblib
+
+---
+
+# 📌 Future Improvements
+
+- FAISS / ANN retrieval
+- Transformer embeddings
+- Online learning
+- Time-decay ranking
+- XGBoost rankers
+
+---
+
+# 📜 License
+
+MIT
